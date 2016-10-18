@@ -1,12 +1,12 @@
 ﻿@model Garage20.Models.Vehicle
 
 @{
-    ViewBag.Title = "Delete";
+    ViewBag.Title = "Checkout";
 }
 
-<h2>Delete</h2>
+<h2>Reciept</h2>
 
-<h3>Are you sure you want to delete this?</h3>
+
 <div>
     <h4>Vehicle</h4>
     <hr />
@@ -59,13 +59,39 @@
             @Html.DisplayFor(model => model.Checkout)
         </dd>
 
-    </dl>
 
+        <dt>
+            Parking time
+        </dt>
+
+        <dd>
+            @ViewBag.Parkingtime minutes
+        </dd>
+
+        <dt>
+            Parking cost
+        </dt>
+
+        <dd>
+            @ViewBag.Parkingcost kr
+        </dd>
+        <dt>
+            VAT
+        </dt>
+
+        <dd>
+            @ViewBag.ParkingVAT kr
+        </dd>
+
+
+    </dl>
+    <hr />
+    <h3>Are you sure you want to checkout this vehicle?</h3>
     @using (Html.BeginForm()) {
         @Html.AntiForgeryToken()
 
         <div class="form-actions no-color">
-            <input type="submit" value="Delete" class="btn btn-default" /> |
+            <input type="submit" value="Checkout Vehicle" class="btn btn-default" /> <a href="#" onclick="window.print();return false;" class="btn btn-default">Print this page</a>  | 
             @Html.ActionLink("Back to List", "Index")
         </div>
     }

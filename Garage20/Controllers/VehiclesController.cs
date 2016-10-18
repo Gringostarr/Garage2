@@ -7,6 +7,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using Garage20.Models;
+using System.Data.SqlTypes;
 
 namespace Garage20.Controllers
 {
@@ -90,6 +91,8 @@ namespace Garage20.Controllers
         {
             if (ModelState.IsValid)
             {
+                vehicle.Checkin = DateTime.Now;
+                vehicle.Checkout = (DateTime)SqlDateTime.MinValue;
                 db.Vehicles.Add(vehicle);
                 db.SaveChanges();
                 return RedirectToAction("Index");
@@ -141,6 +144,12 @@ namespace Garage20.Controllers
             {
                 return HttpNotFound();
             }
+            vehicle.Checkout = DateTime.Now;
+            TimeSpan parkingtime = vehicle.Checkout - vehicle.Checkin;
+            ViewBag.Parkingtime = Math.Round(parkingtime.TotalMinutes, 0);
+            ViewBag.Parkingcost = Math.Round((parkingtime.TotalHours * 60), 2);
+            ViewBag.ParkingVAT = Math.Round((parkingtime.TotalHours * 60)/5, 2);
+
             return View(vehicle);
         }
 
