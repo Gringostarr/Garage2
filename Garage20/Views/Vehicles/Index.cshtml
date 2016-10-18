@@ -26,6 +26,9 @@
         <th>
             @Html.DisplayNameFor(model => model.Checkin)
         </th>
+        <th>
+            Parking time
+        </th>
         <th></th>
     </tr>
 
@@ -45,6 +48,9 @@
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.Checkin)
+        </td>
+        <td>
+            @Math.Round((DateTime.Now - (item.Checkin)).TotalMinutes, 0) min
         </td>
         <td>
             @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
