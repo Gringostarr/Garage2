@@ -46,7 +46,42 @@ namespace Garage20.Controllers
         {
             return View();
         }
+        // GET: Vehicles/Search
+        public ActionResult Search(string searchString, string colorString, string noWheelsString, string vehicleType)
+        {
+            var VehicleTypeLst = new List<string>();
 
+            var VehicleQry = from d in db.Vehicles
+                           orderby d.VehicleType
+                           select d.VehicleType;
+
+           // VehicleTypeLst.AddRange(VehicleQry);
+            ViewBag.vehicleType = new SelectList(VehicleQry.Distinct());
+
+            var vehicles = from v in db.Vehicles
+                           select v;
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                vehicles = vehicles.Where(s => s.Regnr.StartsWith(searchString));
+            }
+            if (!String.IsNullOrEmpty(colorString))
+            {
+                vehicles = vehicles.Where(s => s.Regnr.StartsWith(colorString));
+            }
+            if (!String.IsNullOrEmpty(noWheelsString))
+            {
+                int noWheels = int.Parse(noWheelsString);
+                vehicles = vehicles.Where(s => s.NumberOfWheels.Equals(noWheels));
+            }
+            if (!string.IsNullOrEmpty(vehicleType))
+            {
+                if (vehicleType != "All") { vehicles = vehicles.Where(s => s.VehicleType.ToString() == vehicleType); }
+            }
+
+            return View(vehicles);
+            //return View(db.Vehicles.ToList());
+        }
         // POST: Vehicles/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
