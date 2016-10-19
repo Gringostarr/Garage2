@@ -49,18 +49,20 @@
         <dd>
             @Html.DisplayFor(model => model.Checkin)
         </dd>
-
         <dt>
-            @Html.DisplayNameFor(model => model.Checkout)
+            Parking time
         </dt>
-
         <dd>
-            @Html.DisplayFor(model => model.Checkout)
+            @Math.Round((DateTime.Now - (Model.Checkin)).TotalMinutes, 0) min
         </dd>
 
+
+
+
+       
     </dl>
 </div>
 <p>
     @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
-    @Html.ActionLink("Back to List", "Index")
+    @Html.ActionLink("Back to Garage Overview", "Index")
 </p>

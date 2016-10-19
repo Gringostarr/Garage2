@@ -1,7 +1,7 @@
 ﻿@model IEnumerable<Garage20.Models.Vehicle>
 
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Garage Overview";
     var selectList = new SelectList(Enum.GetValues(typeof(Garage20.Models.VehicleType)));
 }
 
@@ -15,7 +15,7 @@ else
 }
 
 <p>
-    @Html.ActionLink("Create New", "Create")
+    @Html.ActionLink("Check In Vehicle", "Create")
 </p>
 <table class="table">
     <tr>
@@ -45,9 +45,7 @@ else
             </a>
         </th>
         <th>
-            <a href="?orderBy=checkout">
-                @Html.DisplayNameFor(model => model.Checkout)
-            </a>
+            Parking time
         </th>
         <th></th>
     </tr>
@@ -74,7 +72,7 @@ else
                 @Html.DisplayFor(modelItem => item.Checkin)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Checkout)
+                @Math.Round((DateTime.Now - (item.Checkin)).TotalMinutes, 0) min
             </td>
             <td>
                 @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |

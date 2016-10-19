@@ -7,6 +7,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using Garage20.Models;
+using System.Data.SqlTypes;
 
 namespace Garage20.Controllers
 {
@@ -80,7 +81,42 @@ namespace Garage20.Controllers
         {
             return View();
         }
+        // GET: Vehicles/Search
+        public ActionResult Search(string searchString, string colorString, string noWheelsString, string vehicleType)
+        {
+            var VehicleTypeLst = new List<string>();
 
+            var VehicleQry = from d in db.Vehicles
+                           orderby d.VehicleType
+                           select d.VehicleType;
+
+           // VehicleTypeLst.AddRange(VehicleQry);
+            ViewBag.vehicleType = new SelectList(VehicleQry.Distinct());
+
+            var vehicles = from v in db.Vehicles
+                           select v;
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                vehicles = vehicles.Where(s => s.Regnr.StartsWith(searchString));
+            }
+            if (!String.IsNullOrEmpty(colorString))
+            {
+                vehicles = vehicles.Where(s => s.Regnr.StartsWith(colorString));
+            }
+            if (!String.IsNullOrEmpty(noWheelsString))
+            {
+                int noWheels = int.Parse(noWheelsString);
+                vehicles = vehicles.Where(s => s.NumberOfWheels.Equals(noWheels));
+            }
+            if (!string.IsNullOrEmpty(vehicleType))
+            {
+                if (vehicleType != "All") { vehicles = vehicles.Where(s => s.VehicleType.ToString() == vehicleType); }
+            }
+
+            return View(vehicles);
+            //return View(db.Vehicles.ToList());
+        }
         // POST: Vehicles/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
@@ -90,6 +126,8 @@ namespace Garage20.Controllers
         {
             if (ModelState.IsValid)
             {
+                vehicle.Checkin = DateTime.Now;
+                vehicle.Checkout = (DateTime)SqlDateTime.MinValue;
                 db.Vehicles.Add(vehicle);
                 db.SaveChanges();
                 return RedirectToAction("Index");
@@ -141,6 +179,12 @@ namespace Garage20.Controllers
             {
                 return HttpNotFound();
             }
+            vehicle.Checkout = DateTime.Now;
+            TimeSpan parkingtime = vehicle.Checkout - vehicle.Checkin;
+            ViewBag.Parkingtime = Math.Round(parkingtime.TotalMinutes, 0);
+            ViewBag.Parkingcost = Math.Round((parkingtime.TotalHours * 60), 2);
+            ViewBag.ParkingVAT = Math.Round((parkingtime.TotalHours * 60)/5, 2);
+
             return View(vehicle);
         }
 
