@@ -2,7 +2,8 @@
 
 @{
     ViewBag.Title = "Garage Overview";
-    var selectList = new SelectList(Enum.GetValues(typeof(Garage20.Models.VehicleType)));
+    var selectList = new SelectList(Enum.GetValues(typeof(Garage20.Models.VehicleType)),ViewBag.VehicleType);
+    
 }
 
 @if (ViewBag.AllVehicles)
@@ -16,11 +17,23 @@ else
 
 <p>
     @Html.ActionLink("Check In Vehicle", "Create")
+    @using (Html.BeginForm())
+    {
+        
+    <p>
+        Reg nr: @Html.TextBox("SearchString") Color: @Html.TextBox("colorString") No wheels: @Html.TextBox("noWheelsString", "", new { @type = "number", min = "0", max = "16" }) Vehicle Type: @Html.DropDownList("VehicleType",selectList,"All", new { onChange = $"document.location.href = '?filter=' + this.value" })<br>
+        <br>
+        <input type="submit" value="Search" />
+        <br>
+    </p>
+    }
 </p>
 <table class="table">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.Regnr)
+            <a href="?orderBy=regnr">
+                @Html.DisplayNameFor(model => model.Regnr)
+            </a>
         </th>
         <th>
             <a href="?orderBy=color">
@@ -35,8 +48,8 @@ else
         @if (ViewBag.AllVehicles)
         {
             <th>
-            @Html.DropDownList("VehicleType", selectList, "Vehicle Type",
-                 new { onChange = $"document.location.href = '?filter=' + this.value" })
+                @Html.DisplayNameFor(model => model.VehicleType)
+            <!--@Html.DropDownList("VehicleType", selectList, "All")-->
             </th>
         }
         <th>
