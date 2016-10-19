@@ -19,17 +19,17 @@ namespace Garage20.Controllers
         public int GarageCapacity = 21;
 
         // GET: Vehicles
-        public ActionResult Index(string orderBy, string filter, string searchString, string colorString, string noWheelsString)
+        public ActionResult Index(string orderBy, string filter, string searchString, string colorString, string noWheelsString, string vehicleTypes)
         {
             //Patrik test
-            //var VehicleTypeLst = new List<string>();
+            var VehicleTypeLst = new List<string>();
 
-            //var VehicleQry = from d in db.Vehicles
-            //                 orderby d.VehicleType
-            //                 select d.VehicleType;
+            var VehicleQry = from d in db.Vehicles
+                             orderby d.VehicleType
+                             select d.VehicleType;
 
-            //// VehicleTypeLst.AddRange(VehicleQry);
-            //ViewBag.vehicleTypes = new SelectList(VehicleQry.Distinct());
+            // VehicleTypeLst.AddRange(VehicleQry);
+            ViewBag.vehicleTypes = new SelectList(VehicleQry.Distinct());
             var vehiclesSearch = from v in db.Vehicles
                                  select v;
 
@@ -46,9 +46,9 @@ namespace Garage20.Controllers
                 int noWheels = int.Parse(noWheelsString);
                 vehiclesSearch = vehiclesSearch.Where(s => s.NumberOfWheels.Equals(noWheels));
             }
-            if (!string.IsNullOrEmpty(filter))
+            if (!string.IsNullOrEmpty(vehicleTypes))
             {
-                vehiclesSearch = vehiclesSearch.Where(s => s.VehicleType.ToString() == filter);
+                if (vehicleTypes != "All") vehiclesSearch = vehiclesSearch.Where(s => s.VehicleType.ToString() == vehicleTypes);
             }
             //End test
             var vehicles = vehiclesSearch.ToList();
