@@ -72,12 +72,12 @@ else
                 @Html.DisplayFor(modelItem => item.Checkin)
             </td>
             <td>
-                @Math.Round((DateTime.Now - (item.Checkin)).TotalMinutes, 0) min
+                @Garage20.Utilities.Utility.MinutesToHour((DateTime.Now - (item.Checkin)).TotalMinutes)
             </td>
             <td>
                 @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
                 @Html.ActionLink("Details", "Details", new { id = item.Id }) |
-                @Html.ActionLink("Delete", "Delete", new { id = item.Id })
+                @Html.ActionLink("Checkout", "Delete", new { id = item.Id })
             </td>
         </tr>
     }
