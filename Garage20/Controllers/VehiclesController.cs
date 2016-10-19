@@ -16,9 +16,44 @@ namespace Garage20.Controllers
         private VehicleContext db = new VehicleContext();
 
         // GET: Vehicles
-        public ActionResult Index()
+        public ActionResult Index(string orderBy, string filter)
         {
-            return View(db.Vehicles.ToList());
+            var vehicles = db.Vehicles.ToList();
+            ViewBag.AllVehicles = true;
+            ViewBag.VehicleType = "";
+            if (filter != null)
+            {
+                ViewBag.AllVehicles = false;
+                ViewBag.VehicleType = this.PluralOf(filter);
+                vehicles = vehicles.Where(v => v.VehicleType.ToString() == filter).ToList();
+            }
+            else if (orderBy != null)
+            {
+                switch (orderBy)
+                {
+                    case "regnr":
+                        vehicles = vehicles.OrderBy(v => v.Regnr).ToList();
+                        break;
+
+                    case "color":
+                        vehicles = vehicles.OrderBy(v => v.Color).ToList();
+                        break;
+
+                    case "wheels":
+                        vehicles = vehicles.OrderBy(v => v.NumberOfWheels).ToList();
+                        break;
+
+                    case "checkin":
+                        vehicles = vehicles.OrderBy(v => v.Checkin).ToList();
+                        break;
+
+                    case "checkout":
+                        vehicles = vehicles.OrderBy(v => v.Checkout).ToList();
+                        break;
+
+                }
+            }
+            return View(vehicles);
         }
 
         // GET: Vehicles/Details/5
@@ -171,6 +206,19 @@ namespace Garage20.Controllers
                 db.Dispose();
             }
             base.Dispose(disposing);
+        }
+
+        private string PluralOf(string vehicleType)
+        {
+            switch (vehicleType.ToLower())
+            {
+                case "car": return "Cars";
+                case "bus": return "Buses";
+                case "motorcycle": return "MotorCycles";
+                case "boat": return "Boats";
+                case "airplane": return "Airplanes";
+                default: return vehicleType + "s";
+            }
         }
     }
 }

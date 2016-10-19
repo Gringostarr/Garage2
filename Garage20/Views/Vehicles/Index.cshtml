@@ -2,9 +2,17 @@
 
 @{
     ViewBag.Title = "Garage Overview";
+    var selectList = new SelectList(Enum.GetValues(typeof(Garage20.Models.VehicleType)));
 }
 
-<h2>Garage Overview</h2>
+@if (ViewBag.AllVehicles)
+{
+   <h2>Index</h2>
+}
+else
+{
+    <h2>@ViewBag.VehicleType</h2>
+}
 
 <p>
     @Html.ActionLink("Check In Vehicle", "Create")
@@ -15,13 +23,26 @@
             @Html.DisplayNameFor(model => model.Regnr)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Color)
+            <a href="?orderBy=color">
+                @Html.DisplayNameFor(model => model.Color)
+            </a>
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.VehicleType)
+            <a href="?orderBy=wheels">
+                @Html.DisplayNameFor(model => model.NumberOfWheels)
+            </a>
         </th>
+        @if (ViewBag.AllVehicles)
+        {
+            <th>
+            @Html.DropDownList("VehicleType", selectList, "Vehicle Type",
+                 new { onChange = $"document.location.href = '?filter=' + this.value" })
+            </th>
+        }
         <th>
-            @Html.DisplayNameFor(model => model.Checkin)
+            <a href="?orderBy=checkin">
+                @Html.DisplayNameFor(model => model.Checkin)
+            </a>
         </th>
         <th>
             Parking time
@@ -29,29 +50,36 @@
         <th></th>
     </tr>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.Regnr)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Color)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.VehicleType)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Checkin)
-        </td>
-        <td>
-            @Math.Round((DateTime.Now - (item.Checkin)).TotalMinutes, 0) min
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
-            @Html.ActionLink("Details", "Details", new { id=item.Id }) |
-            @Html.ActionLink("Checkout", "Delete", new { id=item.Id })
-        </td>
-    </tr>
-}
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Regnr)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Color)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.NumberOfWheels)
+            </td>
+            @if (ViewBag.AllVehicles)
+            {
+                <td>
+                    @Html.DisplayFor(modelItem => item.VehicleType)
+                </td>
+            }
+            <td>
+                @Html.DisplayFor(modelItem => item.Checkin)
+            </td>
+            <td>
+                @Math.Round((DateTime.Now - (item.Checkin)).TotalMinutes, 0) min
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
+                @Html.ActionLink("Details", "Details", new { id = item.Id }) |
+                @Html.ActionLink("Delete", "Delete", new { id = item.Id })
+            </td>
+        </tr>
+    }
 
 </table>
