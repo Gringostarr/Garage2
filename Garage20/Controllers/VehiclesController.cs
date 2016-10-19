@@ -14,7 +14,9 @@ namespace Garage20.Controllers
     public class VehiclesController : Controller
     {
         private VehicleContext db = new VehicleContext();
-        private double parkingPrice = 60;
+
+        public double parkingPrice = 60;
+        public int GarageCapacity = 21;
 
         // GET: Vehicles
         public ActionResult Index(string orderBy, string filter, string searchString, string colorString, string noWheelsString)
