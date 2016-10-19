@@ -1,0 +1,90 @@
+﻿@model IEnumerable<Garage20.Models.Vehicle>
+
+@{
+    ViewBag.Title = "Statistics";
+}
+
+<h2>Statistics</h2>
+
+<div>
+    <h4>Vehicle</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            Cars
+        </dt>
+
+        <dd>
+            @ViewBag.CarCount
+        </dd>
+
+        <dt>
+            Motorcycles
+        </dt>
+
+        <dd>@ViewBag.MotorcycleCount
+
+        </dd>
+
+        <dt>
+            Buses
+        </dt>
+
+        <dd>
+            @ViewBag.BusCount
+        </dd>
+
+        <dt>
+            Airplanes
+        </dt>
+
+        <dd>
+            @ViewBag.AirplaneCount
+        </dd>
+
+        <dt>
+            Boats
+        </dt>
+
+        <dd>
+            @ViewBag.BoatCount
+        </dd>
+
+        <dt>
+            Number Of Wheels
+        </dt>
+
+        <dd>
+            @ViewBag.WheelCount
+        </dd>
+        <dt>
+            Number of vehicles
+        </dt>
+
+        <dd>
+            @ViewBag.VehicleCount
+        </dd>
+
+
+
+        <dt>
+            Total parkingtime
+        </dt>
+
+        <dd>
+            @ViewBag.ParkingtimeHour
+        </dd>
+
+
+        <dt>
+            Present value
+        </dt>
+
+        <dd>
+            @ViewBag.Parkingcost kr
+        </dd>
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Back to List", "Index")
+</p>

@@ -14,6 +14,7 @@ namespace Garage20.Controllers
     public class VehiclesController : Controller
     {
         private VehicleContext db = new VehicleContext();
+        private double parkingPrice = 60;
 
         // GET: Vehicles
         public ActionResult Index(string orderBy, string filter, string searchString, string colorString, string noWheelsString, string vehicleTypes)
@@ -214,8 +215,8 @@ namespace Garage20.Controllers
             vehicle.Checkout = DateTime.Now;
             TimeSpan parkingtime = vehicle.Checkout - vehicle.Checkin;
             ViewBag.Parkingtime = Math.Round(parkingtime.TotalMinutes, 0);
-            ViewBag.Parkingcost = Math.Round((parkingtime.TotalHours * 60), 2);
-            ViewBag.ParkingVAT = Math.Round((parkingtime.TotalHours * 60)/5, 2);
+            ViewBag.Parkingcost = Math.Round((parkingtime.TotalHours * parkingPrice), 2);
+            ViewBag.ParkingVAT = Math.Round((parkingtime.TotalHours * parkingPrice) /5, 2);
 
             return View(vehicle);
         }
@@ -252,5 +253,36 @@ namespace Garage20.Controllers
                 default: return vehicleType + "s";
             }
         }
+
+        public ActionResult Statistics()
+        {
+            double totalTime = 0;
+            ViewBag.CarCount = db.Vehicles.Where(v => v.VehicleType == VehicleType.Car).Count();
+            ViewBag.BusCount = db.Vehicles.Where(v => v.VehicleType == VehicleType.Bus).Count();
+            ViewBag.AirplaneCount = db.Vehicles.Where(v => v.VehicleType == VehicleType.Airplane).Count();
+            ViewBag.BoatCount = db.Vehicles.Where(v => v.VehicleType == VehicleType.Boat).Count();
+            ViewBag.MotorcycleCount = db.Vehicles.Where(v => v.VehicleType == VehicleType.Motorcycle).Count();
+            ViewBag.WheelCount = db.Vehicles.Sum(x => x.NumberOfWheels);
+            ViewBag.VehicleCount = db.Vehicles.Count();
+
+            foreach (var vehicle in db.Vehicles)
+            {
+                TimeSpan parkingtime = DateTime.Now - vehicle.Checkin;
+                totalTime += parkingtime.TotalMinutes;
+            }
+
+            ViewBag.Parkingtime = Math.Round(totalTime);
+
+            ViewBag.ParkingtimeHour = Utilities.Utility.MinutesToHour(totalTime);
+
+            ViewBag.Parkingcost = Math.Round((totalTime * parkingPrice/60), 2);
+
+
+
+            return View();
+        }
+
+
+
     }
 }

@@ -53,7 +53,7 @@
             Parking time
         </dt>
         <dd>
-            @Math.Round((DateTime.Now - (Model.Checkin)).TotalMinutes, 0) min
+            @Garage20.Utilities.Utility.MinutesToHour((DateTime.Now - (Model.Checkin)).TotalMinutes)
         </dd>
 
 
