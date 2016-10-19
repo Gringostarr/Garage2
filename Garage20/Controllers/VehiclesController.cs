@@ -16,15 +16,47 @@ namespace Garage20.Controllers
         private VehicleContext db = new VehicleContext();
 
         // GET: Vehicles
-        public ActionResult Index(string orderBy, string filter)
+        public ActionResult Index(string orderBy, string filter, string searchString, string colorString, string noWheelsString)
         {
-            var vehicles = db.Vehicles.ToList();
+            //Patrik test
+            //var VehicleTypeLst = new List<string>();
+
+            //var VehicleQry = from d in db.Vehicles
+            //                 orderby d.VehicleType
+            //                 select d.VehicleType;
+
+            //// VehicleTypeLst.AddRange(VehicleQry);
+            //ViewBag.vehicleTypes = new SelectList(VehicleQry.Distinct());
+            var vehiclesSearch = from v in db.Vehicles
+                                 select v;
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                vehiclesSearch = vehiclesSearch.Where(s => s.Regnr.StartsWith(searchString));
+            }
+            if (!String.IsNullOrEmpty(colorString))
+            {
+                vehiclesSearch = vehiclesSearch.Where(s => s.Color.StartsWith(colorString));
+            }
+            if (!String.IsNullOrEmpty(noWheelsString))
+            {
+                int noWheels = int.Parse(noWheelsString);
+                vehiclesSearch = vehiclesSearch.Where(s => s.NumberOfWheels.Equals(noWheels));
+            }
+            if (!string.IsNullOrEmpty(filter))
+            {
+                vehiclesSearch = vehiclesSearch.Where(s => s.VehicleType.ToString() == filter);
+            }
+            //End test
+            var vehicles = vehiclesSearch.ToList();
+            // var vehicles = db.Vehicles.ToList();
             ViewBag.AllVehicles = true;
             ViewBag.VehicleType = "";
-            if (filter != null)
+            //if (filter != null)
+            if (!string.IsNullOrEmpty(filter))
             {
                 ViewBag.AllVehicles = false;
-                ViewBag.VehicleType = this.PluralOf(filter);
+                ViewBag.VehicleType = filter;
                 vehicles = vehicles.Where(v => v.VehicleType.ToString() == filter).ToList();
             }
             else if (orderBy != null)
@@ -82,7 +114,7 @@ namespace Garage20.Controllers
             return View();
         }
         // GET: Vehicles/Search
-        public ActionResult Search(string searchString, string colorString, string noWheelsString, string vehicleType)
+        public ActionResult Search(string searchString, string colorString, string noWheelsString, string vehicleTypes)
         {
             var VehicleTypeLst = new List<string>();
 
@@ -91,7 +123,7 @@ namespace Garage20.Controllers
                            select d.VehicleType;
 
            // VehicleTypeLst.AddRange(VehicleQry);
-            ViewBag.vehicleType = new SelectList(VehicleQry.Distinct());
+            ViewBag.vehicleTypes = new SelectList(VehicleQry.Distinct());
 
             var vehicles = from v in db.Vehicles
                            select v;
@@ -102,16 +134,16 @@ namespace Garage20.Controllers
             }
             if (!String.IsNullOrEmpty(colorString))
             {
-                vehicles = vehicles.Where(s => s.Regnr.StartsWith(colorString));
+                vehicles = vehicles.Where(s => s.Color.StartsWith(colorString));
             }
             if (!String.IsNullOrEmpty(noWheelsString))
             {
                 int noWheels = int.Parse(noWheelsString);
                 vehicles = vehicles.Where(s => s.NumberOfWheels.Equals(noWheels));
             }
-            if (!string.IsNullOrEmpty(vehicleType))
+            if (!string.IsNullOrEmpty(vehicleTypes))
             {
-                if (vehicleType != "All") { vehicles = vehicles.Where(s => s.VehicleType.ToString() == vehicleType); }
+                if (vehicleTypes != "All") { vehicles = vehicles.Where(s => s.VehicleType.ToString() == vehicleTypes); }
             }
 
             return View(vehicles);

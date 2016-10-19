@@ -12,9 +12,11 @@
 @using (Html.BeginForm())
 {
     <p>
-        Reg nr: @Html.TextBox("SearchString") Color: @Html.TextBox("colorString") No wheels: @Html.TextBox("noWheelsString", "", new {@type="number", min = "0", max = "100" }) Vehicle Type: @Html.DropDownList("vehicleType", "All")<br>
+        Reg nr: @Html.TextBox("SearchString") Color: @Html.TextBox("colorString") No wheels: @Html.TextBox("noWheelsString", "", new {@type="number", min = "0", max = "16" }) Vehicle Type: @Html.DropDownList("vehicleTypes", "All")<br>
+        <br>
         <input type="submit" value="Search"/>
         <br>
+        @DateTime.Now
     </p>
 }
  
