@@ -20,7 +20,9 @@ else
 <table class="table">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.Regnr)
+            <a href="?orderBy=regnr">
+                @Html.DisplayNameFor(model => model.Regnr)
+            </a>
         </th>
         <th>
             <a href="?orderBy=color">
