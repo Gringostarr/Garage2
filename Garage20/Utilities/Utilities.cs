@@ -24,12 +24,12 @@ namespace Garage20.Utilities
             Regex regExp = new Regex("[a-zA-Z]{3}([0-9][0-9][1-9])|([1-9][0-9]0)|(0[1-9]0)");
             return regExp.Match(regNum).Success;
         }
+
         static public string MinutesToHour(double minutes)
         {
             var h = Math.Floor(minutes / 60);
             var m = minutes - (h * 60);
             return $"{h}h {m:00}m";
         }
-
     }
 }

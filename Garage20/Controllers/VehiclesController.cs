@@ -156,7 +156,13 @@ namespace Garage20.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "Id,Regnr,Color,NumberOfWheels,VehicleType,Checkin,Checkout,Placing")] Vehicle vehicle)
         {
-            
+            var vehicles = from v in db.Vehicles
+                           select v;
+            if (vehicles.Any(o => o.Regnr == vehicle.Regnr))
+            {
+                ModelState.AddModelError("RegNr", "Registration number exist");
+                return View(vehicle);
+            }
             if (ModelState.IsValid)
             {
                 vehicle.Checkin = DateTime.Now;
@@ -285,6 +291,20 @@ namespace Garage20.Controllers
             return View();
         }
 
+        // [Remote("CheckRegNrExist", "Vehicles", HttpMethod = "POST", ErrorMessage = "Registration number already exists.")]
+        //public ActionResult CheckRegNrExist(string Regnr)
+        //{
+        //    bool ifRegNrExist = false;
+        //    try
+        //    {
+        //        ifRegNrExist = Regnr.Equals(Regnr) ? true : false;
+        //        return Json(!ifRegNrExist, JsonRequestBehavior.AllowGet);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return Json(false, JsonRequestBehavior.AllowGet);
+        //    }
+        //}
 
 
     }
