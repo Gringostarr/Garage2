@@ -11,9 +11,18 @@ namespace Garage20.Models
     public class Vehicle
     {
         public int Id { get; set; }
-
+        private string regNr;
         [RegularExpression(@"[a-zA-Z]{3}(([0-9][0-9][1-9])|([1-9][0-9]0)|(0[1-9]0))", ErrorMessage ="Invalid registration number")]
-        public string Regnr { get; set; }
+        public string Regnr {
+            get
+            {
+                return regNr;
+            }
+            set
+            {
+                regNr = value.ToUpper();
+            }
+        }
 
         [VehicleColor(ErrorMessage = "Unrecognized color")]
         public string Color { get; set; }
@@ -27,6 +36,8 @@ namespace Garage20.Models
         public DateTime Checkin { get; set; }
 
         public DateTime Checkout { get; set; }
+
+        public int Placing { get; set; }
     }
 
     public enum VehicleType

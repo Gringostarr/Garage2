@@ -22,3 +22,20 @@ select,
 textarea {
     max-width: 280px;
 }
+
+
+.image { 
+   position: relative; 
+   width: 100%; /* for IE 6 */
+}
+
+h5 { 
+   position: absolute; 
+   top: 40px; 
+   left: 250px; 
+   width: 100%; 
+   font-size: 2.5em;
+   font-weight: 300;
+   color: white;
+   font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif
+}
