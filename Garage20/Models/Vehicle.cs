@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Globalization;
 using System.Linq;
 using System.Web;
+using System.Web.Mvc;
 
 namespace Garage20.Models
 {
@@ -13,6 +14,7 @@ namespace Garage20.Models
         public int Id { get; set; }
         private string regNr;
         [RegularExpression(@"[a-zA-Z]{3}(([0-9][0-9][1-9])|([1-9][0-9]0)|(0[1-9]0))", ErrorMessage ="Invalid registration number")]
+        //[System.ComponentModel.DataAnnotations.Schema.Index(IsUnique = true)]
         public string Regnr {
             get
             {
