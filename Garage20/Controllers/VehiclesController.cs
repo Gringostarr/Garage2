@@ -80,6 +80,9 @@ namespace Garage20.Controllers
                     case "checkout":
                         vehiclesSearch = vehiclesSearch.OrderBy(v => v.Checkout);
                         break;
+                    case "placing":
+                        vehiclesSearch = vehiclesSearch.OrderBy(v => v.Placing);
+                        break;
 
                 }
             }
@@ -152,7 +155,7 @@ namespace Garage20.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,Regnr,Color,NumberOfWheels,VehicleType,Checkin,Checkout")] Vehicle vehicle)
+        public ActionResult Create([Bind(Include = "Id,Regnr,Color,NumberOfWheels,VehicleType,Checkin,Checkout,Placing")] Vehicle vehicle)
         {
             
             if (ModelState.IsValid)
@@ -187,7 +190,7 @@ namespace Garage20.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,Regnr,Color,NumberOfWheels,VehicleType,Checkin,Checkout")] Vehicle vehicle)
+        public ActionResult Edit([Bind(Include = "Id,Regnr,Color,NumberOfWheels,VehicleType,Checkin,Checkout,Placing")] Vehicle vehicle)
         {
             if (ModelState.IsValid)
             {
