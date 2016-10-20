@@ -61,6 +61,11 @@ else
         <th>
             Parking time
         </th>
+        <th>
+            <a href="?orderBy=placing&SearchString=@ViewBag.SearchString&colorString=@ViewBag.ColorString&noWheelsString=@ViewBag.NumberOfWheels&vehicleTypes=@ViewBag.VehicleType">
+                @Html.DisplayNameFor(model => model.Placing)
+            </a>
+        </th>
         <th></th>
     </tr>
 
@@ -87,6 +92,9 @@ else
             </td>
             <td>
                 @Garage20.Utilities.Utility.MinutesToHour((DateTime.Now - (item.Checkin)).TotalMinutes)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Placing)
             </td>
             <td>
                 @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |

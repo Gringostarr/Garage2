@@ -27,6 +27,8 @@ namespace Garage20.Models
         public DateTime Checkin { get; set; }
 
         public DateTime Checkout { get; set; }
+
+        public int Placing { get; set; }
     }
 
     public enum VehicleType
