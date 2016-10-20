@@ -14,9 +14,7 @@ namespace Garage20.Controllers
     public class VehiclesController : Controller
     {
         private VehicleContext db = new VehicleContext();
-
-        public double parkingPrice = 60;
-        public int GarageCapacity = 21;
+        private Utilities.Variables vars = new Utilities.Variables();
 
         // GET: Vehicles
         public ActionResult Index(string orderBy, string filter, string searchString, string colorString, string noWheelsString, string vehicleTypes)
@@ -112,6 +110,7 @@ namespace Garage20.Controllers
         // GET: Vehicles/Create
         public ActionResult Create()
         {
+            ViewBag.PossibleToAdd = db.Vehicles.Count() < vars.GarageCapacity;
             return View();
         }
         // GET: Vehicles/Search
@@ -217,8 +216,8 @@ namespace Garage20.Controllers
             vehicle.Checkout = DateTime.Now;
             TimeSpan parkingtime = vehicle.Checkout - vehicle.Checkin;
             ViewBag.Parkingtime = Math.Round(parkingtime.TotalMinutes, 0);
-            ViewBag.Parkingcost = Math.Round((parkingtime.TotalHours * parkingPrice), 2);
-            ViewBag.ParkingVAT = Math.Round((parkingtime.TotalHours * parkingPrice) /5, 2);
+            ViewBag.Parkingcost = Math.Round((parkingtime.TotalHours * vars.ParkingPrice), 2);
+            ViewBag.ParkingVAT = Math.Round((parkingtime.TotalHours * vars.ParkingPrice) /5, 2);
 
             return View(vehicle);
         }
@@ -258,6 +257,8 @@ namespace Garage20.Controllers
 
         public ActionResult Statistics()
         {
+
+        
             double totalTime = 0;
             ViewBag.CarCount = db.Vehicles.Where(v => v.VehicleType == VehicleType.Car).Count();
             ViewBag.BusCount = db.Vehicles.Where(v => v.VehicleType == VehicleType.Bus).Count();
@@ -277,7 +278,7 @@ namespace Garage20.Controllers
 
             ViewBag.ParkingtimeHour = Utilities.Utility.MinutesToHour(totalTime);
 
-            ViewBag.Parkingcost = Math.Round((totalTime * parkingPrice/60), 2);
+            ViewBag.Parkingcost = Math.Round((totalTime * vars.ParkingPrice / 60), 2);
 
 
 

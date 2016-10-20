@@ -7,10 +7,15 @@
 <h2>Check In</h2>
 
 
-@using (Html.BeginForm()) 
+
+
+
+@if(ViewBag.PossibleToAdd)
+{
+using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
-    
+
     <div class="form-horizontal">
         <h4>Vehicle</h4>
         <hr />
@@ -61,6 +66,11 @@
             </div>
         </div>
     </div>
+}
+}
+else
+{
+    <h3>Garage is full</h3>
 }
 
 <div>
