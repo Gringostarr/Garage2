@@ -14,7 +14,9 @@ namespace Garage20.Controllers
     public class VehiclesController : Controller
     {
         private VehicleContext db = new VehicleContext();
-        private double parkingPrice = 60;
+
+        public double parkingPrice = 60;
+        public int GarageCapacity = 21;
 
         // GET: Vehicles
         public ActionResult Index(string orderBy, string filter, string searchString, string colorString, string noWheelsString, string vehicleTypes)
@@ -30,7 +32,10 @@ namespace Garage20.Controllers
             ViewBag.vehicleTypes = new SelectList(VehicleQry.Distinct());
             var vehiclesSearch = from v in db.Vehicles
                                  select v;
-
+            ViewBag.SearchString = searchString;
+            ViewBag.ColorString = colorString;
+            ViewBag.NumberOfWheels = noWheelsString;
+            ViewBag.VehicleType = vehicleTypes;
             if (!String.IsNullOrEmpty(searchString))
             {
                 vehiclesSearch = vehiclesSearch.Where(s => s.Regnr.StartsWith(searchString));
@@ -49,44 +54,36 @@ namespace Garage20.Controllers
                 if (vehicleTypes != "All") vehiclesSearch = vehiclesSearch.Where(s => s.VehicleType.ToString() == vehicleTypes);
             }
             //End test
-            var vehicles = vehiclesSearch.ToList();
-            // var vehicles = db.Vehicles.ToList();
+
             ViewBag.AllVehicles = true;
-            ViewBag.VehicleType = "";
-            //if (filter != null)
-            if (!string.IsNullOrEmpty(filter))
-            {
-                ViewBag.AllVehicles = false;
-                ViewBag.VehicleType = filter;
-                vehicles = vehicles.Where(v => v.VehicleType.ToString() == filter).ToList();
-            }
-            else if (orderBy != null)
+ 
+           if (!string.IsNullOrEmpty(orderBy))
             {
                 switch (orderBy)
                 {
                     case "regnr":
-                        vehicles = vehicles.OrderBy(v => v.Regnr).ToList();
+                        vehiclesSearch = vehiclesSearch.OrderBy(v => v.Regnr);
                         break;
 
                     case "color":
-                        vehicles = vehicles.OrderBy(v => v.Color).ToList();
+                        vehiclesSearch = vehiclesSearch.OrderBy(v => v.Color);
                         break;
 
                     case "wheels":
-                        vehicles = vehicles.OrderBy(v => v.NumberOfWheels).ToList();
+                        vehiclesSearch = vehiclesSearch.OrderBy(v => v.NumberOfWheels);
                         break;
 
                     case "checkin":
-                        vehicles = vehicles.OrderBy(v => v.Checkin).ToList();
+                        vehiclesSearch = vehiclesSearch.OrderBy(v => v.Checkin);
                         break;
 
                     case "checkout":
-                        vehicles = vehicles.OrderBy(v => v.Checkout).ToList();
+                        vehiclesSearch = vehiclesSearch.OrderBy(v => v.Checkout);
                         break;
 
                 }
             }
-            return View(vehicles);
+            return View(vehiclesSearch);
         }
 
         // GET: Vehicles/Details/5

@@ -20,29 +20,29 @@ else
 </p>
     @using (Html.BeginForm())
     {
+        
     <p>
-        Reg nr: @Html.TextBox("SearchString") Color: @Html.TextBox("colorString") No wheels: @Html.TextBox("noWheelsString", "", new { @type = "number", min = "0", max = "16" }) Vehicle Type: @Html.DropDownList("vehicleTypes", "All")<br/>
-        <!--@Html.DropDownList("VehicleType", selectList, "All", new { onChange = $"document.location.href = '?filter=' + this.value" })<br>-->
+        Reg nr: @Html.TextBox("SearchString") Color: @Html.TextBox("colorString") No wheels: @Html.TextBox("noWheelsString", "", new { @type = "number", min = "0", max = "16" }) Vehicle Type: @Html.DropDownList("vehicleTypes", "All")<br>
+        <!--@Html.DropDownList("VehicleType",selectList,"All", new { onChange = $"document.location.href = '?filter=' + this.value" })<br>-->
         <br/>
         <input type="submit" value="Search" />
         <br/>
     </p>
     }
-
 <table class="table">
     <tr>
         <th>
-            <a href="?orderBy=regnr">
+            <a href="?orderBy=regnr&SearchString=@ViewBag.SearchString&colorString=@ViewBag.ColorString&noWheelsString=@ViewBag.NumberOfWheels&vehicleTypes=@ViewBag.VehicleType">
                 @Html.DisplayNameFor(model => model.Regnr)
             </a>
         </th>
         <th>
-            <a href="?orderBy=color">
+            <a href="?orderBy=color&SearchString=@ViewBag.SearchString&colorString=@ViewBag.ColorString&noWheelsString=@ViewBag.NumberOfWheels&vehicleTypes=@ViewBag.VehicleType">
                 @Html.DisplayNameFor(model => model.Color)
             </a>
         </th>
         <th>
-            <a href="?orderBy=wheels">
+            <a href="?orderBy=wheels&SearchString=@ViewBag.SearchString&colorString=@ViewBag.ColorString&noWheelsString=@ViewBag.NumberOfWheels&vehicleTypes=@ViewBag.VehicleType">
                 @Html.DisplayNameFor(model => model.NumberOfWheels)
             </a>
         </th>
@@ -54,7 +54,7 @@ else
             </th>
         }
         <th>
-            <a href="?orderBy=checkin">
+            <a href="?orderBy=checkin&SearchString=@ViewBag.SearchString&colorString=@ViewBag.ColorString&noWheelsString=@ViewBag.NumberOfWheels&vehicleTypes=@ViewBag.VehicleType">
                 @Html.DisplayNameFor(model => model.Checkin)
             </a>
         </th>
