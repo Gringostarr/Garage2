@@ -13,16 +13,23 @@ namespace Garage20.Controllers
 {
     public class VehiclesController : Controller
     {
+
+        public Utilities.Variables vars = new Utilities.Variables();
+
         public VehiclesController()
         {
+            parkingPrice = vars.ParkingPrice;
+            GarageCapacity = vars.GarageCapacity;
             this.db = new VehicleContext();
             this.isOccupied = new bool[GarageCapacity];
             this.motorCycleCount = new byte[GarageCapacity];
             this.InitializeTables();
         }
 
-        public const double parkingPrice = 60;
-        public const int GarageCapacity = 250;
+
+
+        public double parkingPrice;
+        public int GarageCapacity;
         private readonly VehicleContext db;
         private readonly bool[] isOccupied;
         private readonly byte[] motorCycleCount;
@@ -252,7 +259,7 @@ namespace Garage20.Controllers
             }
             if (ModelState.IsValid)
             {
-                var vehicles = db.Vehicles.ToList();
+                //var vehicles = db.Vehicles.ToList();
 
                 vehicle.Checkin = DateTime.Now;
                 vehicle.Checkout = (DateTime)SqlDateTime.MinValue;

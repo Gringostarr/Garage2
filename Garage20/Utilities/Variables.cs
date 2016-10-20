@@ -9,7 +9,7 @@ namespace Garage20.Utilities
     {
         public int GarageCapacity
         {
-            get { return 7; }
+            get { return 100; }
         }
         public int ParkingPrice
         {
