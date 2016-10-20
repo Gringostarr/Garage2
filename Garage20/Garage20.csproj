@@ -149,6 +149,10 @@
     <Compile Include="Utilities\Variables.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="App_Data\Garage20.Models.VehicleContext.mdf" />
+    <Content Include="App_Data\Garage20.Models.VehicleContext_log.ldf">
+      <DependentUpon>Garage20.Models.VehicleContext.mdf</DependentUpon>
+    </Content>
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\parking.jpg" />
@@ -192,9 +196,7 @@
     <Content Include="Views\Vehicles\Search.cshtml" />
     <Content Include="Views\Vehicles\Statistics.cshtml" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="App_Data\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
     <Content Include="fonts\glyphicons-halflings-regular.ttf" />
