@@ -154,6 +154,7 @@ namespace Garage20.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "Id,Regnr,Color,NumberOfWheels,VehicleType,Checkin,Checkout")] Vehicle vehicle)
         {
+            
             if (ModelState.IsValid)
             {
                 vehicle.Checkin = DateTime.Now;
@@ -190,6 +191,7 @@ namespace Garage20.Controllers
         {
             if (ModelState.IsValid)
             {
+                vehicle.Checkout = (DateTime)SqlDateTime.MinValue;
                 db.Entry(vehicle).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");

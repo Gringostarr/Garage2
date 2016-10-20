@@ -21,7 +21,7 @@ namespace Garage20.Utilities
 
         static public bool ValidRegNum(string regNum)
         {
-            Regex regExp = new Regex("[a-zA-Z]([0-9][0-9][1-9])|([1-9][0-9]0)|(0[1-9]0)");
+            Regex regExp = new Regex("[a-zA-Z]{3}([0-9][0-9][1-9])|([1-9][0-9]0)|(0[1-9]0)");
             return regExp.Match(regNum).Success;
         }
         static public string MinutesToHour(double minutes)
