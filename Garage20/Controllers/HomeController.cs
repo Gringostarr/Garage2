@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Garage20.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -8,8 +9,14 @@ namespace Garage20.Controllers
 {
     public class HomeController : Controller
     {
+        private VehicleContext db = new VehicleContext();
+
         public ActionResult Index()
         {
+
+            Utilities.Variables vars = new Utilities.Variables();
+            ViewBag.Parkingspots = vars.GarageCapacity - db.Vehicles.Count();
+            ViewBag.ParkingPrice = vars.ParkingPrice;
             return View();
         }
 
