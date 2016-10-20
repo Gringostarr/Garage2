@@ -22,3 +22,19 @@ select,
 textarea {
     max-width: 280px;
 }
+
+
+.image { 
+   position: relative; 
+   width: 100%; /* for IE 6 */
+}
+
+h2 { 
+   position: absolute; 
+   top: 200px; 
+   left: 100px; 
+   width: 100%; 
+   font-size: 3em;
+   font-weight: bolder;
+   color: white;
+}
