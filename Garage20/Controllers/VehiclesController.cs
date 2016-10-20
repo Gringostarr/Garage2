@@ -13,10 +13,19 @@ namespace Garage20.Controllers
 {
     public class VehiclesController : Controller
     {
-        private VehicleContext db = new VehicleContext();
+        public VehiclesController()
+        {
+            this.db = new VehicleContext();
+            this.isOccupied = new bool[GarageCapacity];
+            this.motorCycleCount = new byte[GarageCapacity];
+            this.InitializeTables();
+        }
 
-        public double parkingPrice = 60;
-        public int GarageCapacity = 21;
+        public const double parkingPrice = 60;
+        public const int GarageCapacity = 250;
+        private readonly VehicleContext db;
+        private readonly bool[] isOccupied;
+        private readonly byte[] motorCycleCount;
 
         // GET: Vehicles
         public ActionResult Index(string orderBy, string filter, string searchString, string colorString, string noWheelsString, string vehicleTypes)
@@ -77,9 +86,6 @@ namespace Garage20.Controllers
                         vehiclesSearch = vehiclesSearch.OrderBy(v => v.Checkin);
                         break;
 
-                    case "checkout":
-                        vehiclesSearch = vehiclesSearch.OrderBy(v => v.Checkout);
-                        break;
                     case "placing":
                         vehiclesSearch = vehiclesSearch.OrderBy(v => v.Placing);
                         break;
@@ -102,6 +108,85 @@ namespace Garage20.Controllers
                 return HttpNotFound();
             }
             return View(vehicle);
+        }
+
+        private void FreeParkingSpace(Vehicle vehicle)
+        {
+            switch (vehicle.VehicleType)
+            {
+                case VehicleType.Car:
+                    this.isOccupied[vehicle.Placing] = false;
+                    break;
+                case VehicleType.Bus:
+                    this.isOccupied[vehicle.Placing] = false;
+                    this.isOccupied[vehicle.Placing + 1] = false;
+                    break;
+                case VehicleType.Motorcycle:
+                    this.motorCycleCount[vehicle.Placing]--;
+                    if (this.motorCycleCount[vehicle.Placing] == 0)
+                        this.isOccupied[vehicle.Placing] = false;
+                    break;
+                case VehicleType.Boat:
+                    this.isOccupied[vehicle.Placing] = false;
+                    this.isOccupied[vehicle.Placing + 1] = false;
+                    break;
+                case VehicleType.Airplane:
+                    this.isOccupied[vehicle.Placing] = false;
+                    this.isOccupied[vehicle.Placing + 1] = false;
+                    this.isOccupied[vehicle.Placing + 2] = false;
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private int FindParkingSpace(Vehicle vehicle)
+        {
+            int size = 0;
+
+            switch (vehicle.VehicleType)
+            {
+                case VehicleType.Car:
+                    size = 0;
+                    break;
+                case VehicleType.Bus:
+                    size = 1;
+                    break;
+                case VehicleType.Motorcycle:
+                    size = 0;
+                    break;
+                case VehicleType.Boat:
+                    size = 1;
+                    break;
+                case VehicleType.Airplane:
+                    size = 2;
+                    break;
+            }
+            if (vehicle.VehicleType == VehicleType.Motorcycle)
+            {
+                for (int i = 0; i < GarageCapacity; i++)
+                {
+                    if (!this.isOccupied[i] || this.motorCycleCount[i] < 3)
+                    {
+                        this.motorCycleCount[i]++;
+                        this.isOccupied[i] = true;
+                        return i;
+                    }
+                }
+            }
+            else
+            {
+                for (int i = 0; i < GarageCapacity; i++)
+                {
+                    if (!this.isOccupied[i] && i + size < GarageCapacity)
+                    {
+                        for (int j = i; j <= i + size; j++)
+                            this.isOccupied[i] = true;
+                        return i;
+                    }
+                }
+            }
+            return -1; 
         }
 
         public ActionResult Vehicles()
@@ -160,8 +245,11 @@ namespace Garage20.Controllers
             
             if (ModelState.IsValid)
             {
+                var vehicles = db.Vehicles.ToList();
+
                 vehicle.Checkin = DateTime.Now;
                 vehicle.Checkout = (DateTime)SqlDateTime.MinValue;
+                vehicle.Placing = this.FindParkingSpace(vehicle);
                 db.Vehicles.Add(vehicle);
                 db.SaveChanges();
                 return RedirectToAction("Index");
@@ -214,6 +302,7 @@ namespace Garage20.Controllers
             {
                 return HttpNotFound();
             }
+            this.FreeParkingSpace(vehicle);
             vehicle.Checkout = DateTime.Now;
             TimeSpan parkingtime = vehicle.Checkout - vehicle.Checkin;
             ViewBag.Parkingtime = Math.Round(parkingtime.TotalMinutes, 0);
@@ -253,6 +342,47 @@ namespace Garage20.Controllers
                 case "boat": return "Boats";
                 case "airplane": return "Airplanes";
                 default: return vehicleType + "s";
+            }
+        }
+
+        private void InitializeTables()
+        {
+            var vehicles = this.db.Vehicles.ToList();
+
+            for (int i = 0; i < GarageCapacity; i++)
+                this.motorCycleCount[i] = 0;
+            foreach (Vehicle vehicle in vehicles)
+            {
+                switch (vehicle.VehicleType)
+                {
+                    case VehicleType.Car:
+                       this.isOccupied[vehicle.Placing] = true;
+                       break;
+
+                    case VehicleType.Bus:
+                        this.isOccupied[vehicle.Placing] = true;
+                        this.isOccupied[vehicle.Placing + 1] = true;
+                        break;
+
+                    case VehicleType.Motorcycle:
+                        this.isOccupied[vehicle.Placing] = true;
+                        this.motorCycleCount[vehicle.Placing]++;
+                        break;
+
+                    case VehicleType.Airplane:
+                        this.isOccupied[vehicle.Placing] = true;
+                        this.isOccupied[vehicle.Placing + 1] = true;
+                        this.isOccupied[vehicle.Placing + 2] = true;
+                        break;
+
+                    case VehicleType.Boat:
+                        this.isOccupied[vehicle.Placing] = true;
+                        this.isOccupied[vehicle.Placing + 1] = true;
+                        break;
+
+                    default:
+                        break;
+                }
             }
         }
 
