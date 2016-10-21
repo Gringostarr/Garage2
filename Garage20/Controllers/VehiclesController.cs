@@ -18,22 +18,27 @@ namespace Garage20.Controllers
 
         public VehiclesController()
         {
-            vars = new Utilities.Variables();
-            parkingPrice = vars.ParkingPrice;
-            GarageCapacity = vars.GarageCapacity;
+            this.vars = new Utilities.Variables();
             this.db = new VehicleContext();
-            this.isOccupied = new bool[GarageCapacity];
-            this.motorCycleCount = new short[GarageCapacity];
+        }
+
+        static VehiclesController()
+        {
+            Utilities.Variables systemVars = new Utilities.Variables();
+            parkingPrice = systemVars.ParkingPrice;
+            GarageCapacity = systemVars.GarageCapacity;
+            isOccupied = new bool[GarageCapacity];
+            motorCycleCount = new short[GarageCapacity];
         }
 
 
 
-        public readonly double parkingPrice;
-        public readonly int GarageCapacity;
+        public static double parkingPrice;
+        public static int GarageCapacity;
         private readonly VehicleContext db;
-        private readonly bool[] isOccupied;
-        private readonly short[] motorCycleCount;
-        private bool initialized = false;
+        private static bool[] isOccupied;
+        private static short[] motorCycleCount;
+        private static bool initialized = false;
 
         // GET: Vehicles
         public ActionResult Index(string orderBy, string filter, string searchString, string colorString, string noWheelsString, string vehicleTypes)
@@ -46,7 +51,7 @@ namespace Garage20.Controllers
                              select d.VehicleType;
 
             // VehicleTypeLst.AddRange(VehicleQry);
-            if (!this.initialized)
+            if (!initialized)
             {
                 initialized = true;
                 this.InitializeTables();
@@ -128,28 +133,28 @@ namespace Garage20.Controllers
             switch (vehicle.VehicleType)
             {
                 case VehicleType.Car:
-                    this.isOccupied[vehicle.Placing] = false;
+                    isOccupied[vehicle.Placing] = false;
                     break;
                 case VehicleType.Bus:
-                    this.isOccupied[vehicle.Placing] = false;
-                    this.isOccupied[vehicle.Placing + 1] = false;
+                    isOccupied[vehicle.Placing] = false;
+                    isOccupied[vehicle.Placing + 1] = false;
                     break;
                 case VehicleType.Motorcycle:
-                    if (this.motorCycleCount[vehicle.Placing] > 0)
-                        this.motorCycleCount[vehicle.Placing]--;
+                    if (motorCycleCount[vehicle.Placing] > 0)
+                        motorCycleCount[vehicle.Placing]--;
                     else {
-                        this.isOccupied[vehicle.Placing] = false;
-                        this.motorCycleCount[vehicle.Placing] = 0;
+                        isOccupied[vehicle.Placing] = false;
+                        motorCycleCount[vehicle.Placing] = 0;
                     }
                     break;
                 case VehicleType.Boat:
-                    this.isOccupied[vehicle.Placing] = false;
-                    this.isOccupied[vehicle.Placing + 1] = false;
+                    isOccupied[vehicle.Placing] = false;
+                    isOccupied[vehicle.Placing + 1] = false;
                     break;
                 case VehicleType.Airplane:
-                    this.isOccupied[vehicle.Placing] = false;
-                    this.isOccupied[vehicle.Placing + 1] = false;
-                    this.isOccupied[vehicle.Placing + 2] = false;
+                    isOccupied[vehicle.Placing] = false;
+                    isOccupied[vehicle.Placing + 1] = false;
+                    isOccupied[vehicle.Placing + 2] = false;
                     break;
                 default:
                     break;
@@ -182,10 +187,10 @@ namespace Garage20.Controllers
             {
                 for (int i = 0; i < GarageCapacity; i++)
                 {
-                    if (!this.isOccupied[i] || (this.motorCycleCount[i] > 0 && this.motorCycleCount[i] < 3))
+                    if (!isOccupied[i] || (motorCycleCount[i] > 0 && motorCycleCount[i] < 3))
                     {
-                        this.motorCycleCount[i]++;
-                        this.isOccupied[i] = true;
+                        motorCycleCount[i]++;
+                        isOccupied[i] = true;
                         return i;
                     }
                 }
@@ -194,10 +199,10 @@ namespace Garage20.Controllers
             {
                 for (int i = 0; i < GarageCapacity; i++)
                 {
-                    if (!this.isOccupied[i] && i + size < GarageCapacity)
+                    if (!isOccupied[i] && i + size < GarageCapacity)
                     {
                         for (int j = i; j <= i + size; j++)
-                            this.isOccupied[j] = true;
+                            isOccupied[j] = true;
                         return i;
                     }
                 }
@@ -374,34 +379,34 @@ namespace Garage20.Controllers
             var vehicles = this.db.Vehicles.ToList();
 
             for (int i = 0; i < GarageCapacity; i++)
-                this.motorCycleCount[i] = 0;
+                motorCycleCount[i] = 0;
             foreach (Vehicle vehicle in vehicles)
             {
                 switch (vehicle.VehicleType)
                 {
                     case VehicleType.Car:
-                       this.isOccupied[vehicle.Placing] = true;
+                       isOccupied[vehicle.Placing] = true;
                        break;
 
                     case VehicleType.Bus:
-                        this.isOccupied[vehicle.Placing] = true;
-                        this.isOccupied[vehicle.Placing + 1] = true;
+                        isOccupied[vehicle.Placing] = true;
+                        isOccupied[vehicle.Placing + 1] = true;
                         break;
 
                     case VehicleType.Motorcycle:
-                        this.isOccupied[vehicle.Placing] = true;
-                        this.motorCycleCount[vehicle.Placing]++;
+                        isOccupied[vehicle.Placing] = true;
+                        motorCycleCount[vehicle.Placing]++;
                         break;
 
                     case VehicleType.Airplane:
-                        this.isOccupied[vehicle.Placing] = true;
-                        this.isOccupied[vehicle.Placing + 1] = true;
-                        this.isOccupied[vehicle.Placing + 2] = true;
+                        isOccupied[vehicle.Placing] = true;
+                        isOccupied[vehicle.Placing + 1] = true;
+                        isOccupied[vehicle.Placing + 2] = true;
                         break;
 
                     case VehicleType.Boat:
-                        this.isOccupied[vehicle.Placing] = true;
-                        this.isOccupied[vehicle.Placing + 1] = true;
+                        isOccupied[vehicle.Placing] = true;
+                        isOccupied[vehicle.Placing + 1] = true;
                         break;
 
                     default:
