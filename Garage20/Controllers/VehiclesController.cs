@@ -140,12 +140,9 @@ namespace Garage20.Controllers
                     isOccupied[vehicle.Placing + 1] = false;
                     break;
                 case VehicleType.Motorcycle:
-                    if (motorCycleCount[vehicle.Placing] > 0)
-                        motorCycleCount[vehicle.Placing]--;
-                    else {
+                    motorCycleCount[vehicle.Placing]--;
+                    if (motorCycleCount[vehicle.Placing] == 0)
                         isOccupied[vehicle.Placing] = false;
-                        motorCycleCount[vehicle.Placing] = 0;
-                    }
                     break;
                 case VehicleType.Boat:
                     isOccupied[vehicle.Placing] = false;
