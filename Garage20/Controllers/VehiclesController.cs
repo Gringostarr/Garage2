@@ -268,6 +268,7 @@ namespace Garage20.Controllers
                            select v;
             if (vehicles.Any(o => o.Regnr == vehicle.Regnr))
             {
+                ViewBag.PossibleToAdd = db.Vehicles.Count() < vars.GarageCapacity;
                 ModelState.AddModelError("RegNr", "Registration number exist");
                 return View(vehicle);
             }
