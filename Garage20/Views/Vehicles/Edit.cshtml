@@ -48,7 +48,7 @@
                 @Html.ValidationMessageFor(model => model.VehicleType, "", new { @class = "text-danger" })
                 </div>
         </div>
-
+ <!--
         <div class="form-group">
             @Html.LabelFor(model => model.Placing, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
@@ -56,6 +56,7 @@
                 @Html.ValidationMessageFor(model => model.Placing, "", new { @class = "text-danger" })
             </div>
         </div>
+     -->
 
 
 
@@ -66,7 +67,7 @@
                 @Html.ValidationMessageFor(model => model.Checkin, "", new { @class = "text-danger" })
             </div>
         </div>
-        <!--
+        
             <div class="form-group">
             @Html.LabelFor(model => model.Checkout, htmlAttributes: new { @class = "control-label col-md-2" })
                 <div class="col-md-10">
@@ -74,7 +75,7 @@
                     @Html.ValidationMessageFor(model => model.Checkout, "", new { @class = "text-danger" })
                 </div>
             </div>
-        -->
+        
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
                 <input type="submit" value="Save" class="btn btn-default" />

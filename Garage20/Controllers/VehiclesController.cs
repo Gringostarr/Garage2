@@ -294,9 +294,10 @@ namespace Garage20.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "Id,Regnr,Color,NumberOfWheels,VehicleType,Checkin,Checkout,Placing")] Vehicle vehicle)
         {
+            //vehicle.Checkout = (DateTime)SqlDateTime.MinValue;
             if (ModelState.IsValid)
             {
-                vehicle.Checkout = (DateTime)SqlDateTime.MinValue;
+
                 db.Entry(vehicle).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
