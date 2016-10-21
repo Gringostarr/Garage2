@@ -72,7 +72,7 @@
         </dt>
 
         <dd>
-            @ViewBag.Parkingtime minutes
+            @Garage20.Utilities.Utility.MinutesToHour((DateTime.Now - (Model.Checkin)).TotalMinutes)
         </dd>
 
         <dt>
