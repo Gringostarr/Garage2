@@ -14,25 +14,26 @@ namespace Garage20.Controllers
     public class VehiclesController : Controller
     {
 
-        public Utilities.Variables vars = new Utilities.Variables();
+        public Utilities.Variables vars;
 
         public VehiclesController()
         {
+            vars = new Utilities.Variables();
             parkingPrice = vars.ParkingPrice;
             GarageCapacity = vars.GarageCapacity;
             this.db = new VehicleContext();
             this.isOccupied = new bool[GarageCapacity];
-            this.motorCycleCount = new byte[GarageCapacity];
-            this.InitializeTables();
+            this.motorCycleCount = new short[GarageCapacity];
         }
 
 
 
-        public double parkingPrice;
-        public int GarageCapacity;
+        public readonly double parkingPrice;
+        public readonly int GarageCapacity;
         private readonly VehicleContext db;
         private readonly bool[] isOccupied;
-        private readonly byte[] motorCycleCount;
+        private readonly short[] motorCycleCount;
+        private bool initialized = false;
 
         // GET: Vehicles
         public ActionResult Index(string orderBy, string filter, string searchString, string colorString, string noWheelsString, string vehicleTypes)
@@ -45,6 +46,11 @@ namespace Garage20.Controllers
                              select d.VehicleType;
 
             // VehicleTypeLst.AddRange(VehicleQry);
+            if (!this.initialized)
+            {
+                initialized = true;
+                this.InitializeTables();
+            }
             ViewBag.vehicleTypes = new SelectList(VehicleQry.Distinct());
             var vehiclesSearch = from v in db.Vehicles
                                  select v;
@@ -129,9 +135,12 @@ namespace Garage20.Controllers
                     this.isOccupied[vehicle.Placing + 1] = false;
                     break;
                 case VehicleType.Motorcycle:
-                    this.motorCycleCount[vehicle.Placing]--;
-                    if (this.motorCycleCount[vehicle.Placing] == 0)
+                    if (this.motorCycleCount[vehicle.Placing] > 0)
+                        this.motorCycleCount[vehicle.Placing]--;
+                    else {
                         this.isOccupied[vehicle.Placing] = false;
+                        this.motorCycleCount[vehicle.Placing] = 0;
+                    }
                     break;
                 case VehicleType.Boat:
                     this.isOccupied[vehicle.Placing] = false;
@@ -173,7 +182,7 @@ namespace Garage20.Controllers
             {
                 for (int i = 0; i < GarageCapacity; i++)
                 {
-                    if (!this.isOccupied[i] || this.motorCycleCount[i] < 3)
+                    if (!this.isOccupied[i] || (this.motorCycleCount[i] > 0 && this.motorCycleCount[i] < 3))
                     {
                         this.motorCycleCount[i]++;
                         this.isOccupied[i] = true;
@@ -188,7 +197,7 @@ namespace Garage20.Controllers
                     if (!this.isOccupied[i] && i + size < GarageCapacity)
                     {
                         for (int j = i; j <= i + size; j++)
-                            this.isOccupied[i] = true;
+                            this.isOccupied[j] = true;
                         return i;
                     }
                 }
@@ -294,11 +303,11 @@ namespace Garage20.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "Id,Regnr,Color,NumberOfWheels,VehicleType,Checkin,Checkout,Placing")] Vehicle vehicle)
         {
-            //vehicle.Checkout = (DateTime)SqlDateTime.MinValue;
             if (ModelState.IsValid)
             {
-
+               vehicle.Checkout = (DateTime)SqlDateTime.MinValue;
                 db.Entry(vehicle).State = EntityState.Modified;
+            //    db.Vehicles.First(v => v.Id == vehicle.Id) = vehicle;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
@@ -360,7 +369,7 @@ namespace Garage20.Controllers
             }
         }
 
-        private void InitializeTables()
+        private bool InitializeTables()
         {
             var vehicles = this.db.Vehicles.ToList();
 
@@ -399,6 +408,7 @@ namespace Garage20.Controllers
                         break;
                 }
             }
+            return true;
         }
 
         public ActionResult Statistics()
