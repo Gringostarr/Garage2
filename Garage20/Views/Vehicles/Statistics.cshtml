@@ -6,6 +6,8 @@
 
 <h2>Statistics</h2>
 
+@if (ViewBag.VehicleCount > 0)
+{
 <div>
     <h4>Vehicle</h4>
     <hr />
@@ -82,6 +84,11 @@
         </dd>
     </dl>
 </div>
+}
+else
+{
+    <h3>The Garage is empty!</h3>
+}
 <p>
     @Html.ActionLink("Back to List", "Index")
 </p>
