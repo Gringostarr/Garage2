@@ -1,0 +1,90 @@
+﻿@model Garage20.Models.Vehicle
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Vehicle</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Member.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Member.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.VehicleCategory.Category)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.VehicleCategory.Category)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Regnr)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Regnr)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Color)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Color)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.NumberOfWheels)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.NumberOfWheels)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.VehicleType)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.VehicleType)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Checkin)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Checkin)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Checkout)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Checkout)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Placing)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Placing)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

@@ -9,5 +9,7 @@ namespace Garage20.Models
     public class VehicleContext : DbContext
     {
         public DbSet<Vehicle> Vehicles { get; set; }
+        public DbSet<Member> Members { get; set; }
+        public DbSet<VehicleCategory> VehicleCategories { get; set; }
     }
 }

@@ -40,16 +40,18 @@ namespace Garage20.Controllers
         private static short[] motorCycleCount;
         private static bool initialized = false;
 
+
+
         // GET: Vehicles
-        public ActionResult Index(string orderBy, string filter, string searchString, string colorString, string noWheelsString, string vehicleTypes)
+        public ActionResult Index(string orderBy, string filter, string searchString, string colorString, string noWheelsString, string vehicleTypes, string RestrictedView)
         {
             //Patrik test
             var VehicleTypeLst = new List<string>();
 
             var VehicleQry = from d in db.Vehicles
-                             orderby d.VehicleType
-                             select d.VehicleType;
-
+                             select d.VehicleCategory.Category;
+            
+            ViewBag.RestrictedView = RestrictedView;
             // VehicleTypeLst.AddRange(VehicleQry);
             if (!initialized)
             {
@@ -78,7 +80,7 @@ namespace Garage20.Controllers
             }
             if (!string.IsNullOrEmpty(vehicleTypes))
             {
-                if (vehicleTypes != "All") vehiclesSearch = vehiclesSearch.Where(s => s.VehicleType.ToString() == vehicleTypes);
+                if (vehicleTypes != "All") vehiclesSearch = vehiclesSearch.Where(s => s.VehicleCategory.Category.ToString() == vehicleTypes);
             }
             //End test
 
@@ -215,6 +217,8 @@ namespace Garage20.Controllers
         // GET: Vehicles/Create
         public ActionResult Create()
         {
+            ViewBag.MemberId = new SelectList(db.Members, "Id", "Name");
+            ViewBag.VehicleCategoryId = new SelectList(db.VehicleCategories, "Id", "Category");
             ViewBag.PossibleToAdd = db.Vehicles.Count() < vars.GarageCapacity;
             return View();
         }
@@ -259,7 +263,7 @@ namespace Garage20.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,Regnr,Color,NumberOfWheels,VehicleType,Checkin,Checkout,Placing")] Vehicle vehicle)
+        public ActionResult Create([Bind(Include = "Id,VehicleCategoryId,MemberId,Regnr,Color,NumberOfWheels,VehicleType,Checkin,Checkout,Placing")] Vehicle vehicle)
         {
             var vehicles = from v in db.Vehicles
                            select v;
@@ -290,7 +294,8 @@ namespace Garage20.Controllers
                 }
                 return RedirectToAction("Index");
             }
-
+            ViewBag.MemberId = new SelectList(db.Members, "Id", "Name", vehicle.MemberId);
+            ViewBag.VehicleCategoryId = new SelectList(db.VehicleCategories, "Id", "Category", vehicle.VehicleCategoryId);
             return View(vehicle);
         }
 
@@ -306,6 +311,8 @@ namespace Garage20.Controllers
             {
                 return HttpNotFound();
             }
+            ViewBag.MemberId = new SelectList(db.Members, "Id", "Name", vehicle.MemberId);
+            ViewBag.VehicleCategoryId = new SelectList(db.VehicleCategories, "Id", "Category", vehicle.VehicleCategoryId);
             return View(vehicle);
         }
 
@@ -314,7 +321,7 @@ namespace Garage20.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,Regnr,Color,NumberOfWheels,VehicleType,Checkin,Checkout,Placing")] Vehicle vehicle)
+        public ActionResult Edit([Bind(Include = "Id,VehicleCategoryId,MemberId,Regnr,Color,NumberOfWheels,VehicleType,Checkin,Checkout,Placing")] Vehicle vehicle)
         {
             if (ModelState.IsValid)
             {
@@ -323,6 +330,8 @@ namespace Garage20.Controllers
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
+            ViewBag.MemberId = new SelectList(db.Members, "Id", "Name", vehicle.MemberId);
+            ViewBag.VehicleCategoryId = new SelectList(db.VehicleCategories, "Id", "Category", vehicle.VehicleCategoryId);
             return View(vehicle);
         }
 

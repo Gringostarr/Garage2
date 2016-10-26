@@ -12,6 +12,14 @@ namespace Garage20.Models
     public class Vehicle
     {
         public int Id { get; set; }
+
+        public int VehicleCategoryId { get; set; }
+
+        public int MemberId { get; set; }
+
+        virtual public Member Member { get; set; }
+        virtual public VehicleCategory VehicleCategory { get; set; }
+
         private string regNr;
         [RegularExpression(@"[a-zA-Z]{3}(([0-9][0-9][1-9])|([1-9][0-9]0)|(0[1-9]0))", ErrorMessage ="Invalid registration number")]
         //[System.ComponentModel.DataAnnotations.Schema.Index(IsUnique = true)]
