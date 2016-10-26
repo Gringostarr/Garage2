@@ -266,7 +266,7 @@ namespace Garage20.Controllers
             if (vehicles.Any(o => o.Regnr == vehicle.Regnr))
             {
                 ViewBag.PossibleToAdd = db.Vehicles.Count() < vars.GarageCapacity;
-                ModelState.AddModelError("RegNr", "Registration number exist");
+                ModelState.AddModelError("RegNr", "Registration number exists");
                 return View(vehicle);
             }
             if (ModelState.IsValid)
@@ -275,9 +275,19 @@ namespace Garage20.Controllers
 
                 vehicle.Checkin = DateTime.Now;
                 vehicle.Checkout = (DateTime)SqlDateTime.MinValue;
-                vehicle.Placing = this.FindParkingSpace(vehicle);
-                db.Vehicles.Add(vehicle);
-                db.SaveChanges();
+                int position = this.FindParkingSpace(vehicle);
+                if (position == -1)
+                {
+                    ViewBag.PossibleToAdd = db.Vehicles.Count() < vars.GarageCapacity;
+                    ModelState.AddModelError("Create", "Garage is full");
+                    return View(vehicle);
+                }
+                else
+                {
+                    vehicle.Placing = position;
+                    db.Vehicles.Add(vehicle);
+                    db.SaveChanges();
+                }
                 return RedirectToAction("Index");
             }
 
@@ -310,7 +320,6 @@ namespace Garage20.Controllers
             {
                vehicle.Checkout = (DateTime)SqlDateTime.MinValue;
                 db.Entry(vehicle).State = EntityState.Modified;
-            //    db.Vehicles.First(v => v.Id == vehicle.Id) = vehicle;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
