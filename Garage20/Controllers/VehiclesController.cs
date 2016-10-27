@@ -54,7 +54,7 @@ namespace Garage20.Controllers
             if (!initialized)
             {
                 initialized = true;
-                this.InitializeTables();
+                InitializeTable();
             }
             ViewBag.vehicleTypes = new SelectList(VehicleQry.Distinct());
             var vehiclesSearch = from v in db.Vehicles
