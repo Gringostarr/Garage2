@@ -15,7 +15,33 @@
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.Name)
+            @Html.DisplayFor(model => model.Name) 
+            @if(ViewBag.VC == 0)
+            {
+                @Html.ActionLink("Do you really want to delete?", "Delete", new { id = Model.Id })
+            }
+            else
+            {
+                <span>The member has some cars, you can´t delete yet!</span>
+            }
+        </dd>
+        <dt>
+            Owned Vehicles
+        </dt>
+
+        <dd>
+            <table>
+                @foreach (var v in ViewBag.VehiclesOwned)
+                {
+                <tr>
+                    <td>@v.Regnr</td>
+                    <td>
+                        @Html.ActionLink("Checkout", "Delete", "Vehicles", new { id = v.Id }, null)
+                    </td>
+                </tr>
+                }
+            </table>
+            
         </dd>
 
     </dl>

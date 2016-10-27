@@ -39,16 +39,23 @@ namespace Garage20.Controllers
         private static bool initialized = false;
 
         // GET: Vehicles
-        public ActionResult Index(string orderBy, string filter, string searchString, string colorString, string noWheelsString, string vehicleTypes, string RestrictedView)
+        public ActionResult Index(string orderBy, string filter, string searchString, string colorString, string noWheelsString, string vehicleTypes, string RestrictedView, string view)
         {
             //Patrik test
             var VehicleTypeLst = new List<string>();
 
             var VehicleQry = from d in db.Vehicles
                              select d.VehicleCategory.Category;
+            if (String.IsNullOrEmpty(view)) { view = "true"; };
+            ViewBag.RestrictedView = view.ToLower(); // RestrictedView;
             
             ViewBag.RestrictedView = RestrictedView;
             // VehicleTypeLst.AddRange(VehicleQry);
+            if (!initialized)
+            {
+                initialized = true;
+                this.InitializeTables();
+            }
             ViewBag.vehicleTypes = new SelectList(VehicleQry.Distinct());
             var vehiclesSearch = from v in db.Vehicles
                                  select v;
@@ -208,9 +215,9 @@ namespace Garage20.Controllers
         }
 
         // GET: Vehicles/Create
-        public ActionResult Create()
+        public ActionResult Create(int? id)
         {
-            ViewBag.MemberId = new SelectList(db.Members, "Id", "Name");
+            ViewBag.MemberId = new SelectList(db.Members, "Id", "Name", id);
             ViewBag.VehicleCategoryId = new SelectList(db.VehicleCategories, "Id", "Category");
             ViewBag.PossibleToAdd = db.Vehicles.Count() < vars.GarageCapacity;
             return View();
@@ -264,6 +271,8 @@ namespace Garage20.Controllers
             {
                 ViewBag.PossibleToAdd = db.Vehicles.Count() < vars.GarageCapacity;
                 ModelState.AddModelError("RegNr", "Registration number exists");
+                ViewBag.MemberId = new SelectList(db.Members, "Id", "Name", vehicle.MemberId);
+                ViewBag.VehicleCategoryId = new SelectList(db.VehicleCategories, "Id", "Category", vehicle.VehicleCategoryId);
                 return View(vehicle);
             }
             if (ModelState.IsValid)

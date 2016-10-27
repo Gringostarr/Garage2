@@ -25,6 +25,13 @@ else
         Reg nr: @Html.TextBox("SearchString") Color: @Html.TextBox("colorString") No wheels: @Html.TextBox("noWheelsString", "", new { @type = "number", min = "0", max = "100" }) Vehicle Type: @Html.DropDownList("vehicleTypes", "All")<br>
         <!--@Html.DropDownList("VehicleType",selectList,"All", new { onChange = $"document.location.href = '?filter=' + this.value" })<br>-->
         <br/>
+        <div>
+            @Html.RadioButton("view", "True", isChecked: true)    Restricted overview
+            @Html.RadioButton("view", "False", isChecked: false)    Detailed overview
+        </div>
+        <br/>
+
+        <br/>
         <input type="submit" value="Search" />
         <br/>
     </p>

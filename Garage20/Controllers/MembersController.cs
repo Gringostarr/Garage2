@@ -38,6 +38,11 @@ namespace Garage20.Controllers
             {
                 return HttpNotFound();
             }
+            var ov = db.Vehicles.Where(v => v.MemberId == member.Id);
+            ViewBag.VC = ov.ToList().Count();
+
+            ViewBag.VehiclesOwned = ov;
+
             return View(member);
         }
 

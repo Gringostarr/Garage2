@@ -21,8 +21,9 @@
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
                     <li>@Html.ActionLink("Home", "Index", "Home")</li>
-                    <li>@Html.ActionLink("Overview", "Index", "Vehicles", new { restrictedview = "false" }, null)</li>
-                    <li>@Html.ActionLink("Restricted Overview", "Index", "Vehicles", new { restrictedview = "true" }, null)</li>
+                    <li>@Html.ActionLink("Overview", "Index", "Vehicles")
+                     <!--<li>@Html.ActionLink("Overview", "Index", "Vehicles", new { restrictedview = "false" }, null)</li>-->
+                    <!--<li>@Html.ActionLink("Restricted Overview", "Index", "Vehicles", new { restrictedview = "true" }, null)</li>-->
                     <li>@Html.ActionLink("Members", "Index", "Members")</li>
                     <li>@Html.ActionLink("Vehicle Categories", "Index", "VehicleCategories", new { restrictedview = "true" }, null)</li>
 
