@@ -27,20 +27,16 @@ namespace Garage20.Controllers
             Utilities.Variables systemVars = new Utilities.Variables();
             parkingPrice = systemVars.ParkingPrice;
             GarageCapacity = systemVars.GarageCapacity;
-            isOccupied = new bool[GarageCapacity];
-            motorCycleCount = new short[GarageCapacity];
+            loadFactor = new float[GarageCapacity];
         }
 
 
-
+        private const float epsilon = 0.01f;
         public static double parkingPrice;
         public static int GarageCapacity;
         private readonly VehicleContext db;
-        private static bool[] isOccupied;
-        private static short[] motorCycleCount;
+        private static float[] loadFactor;
         private static bool initialized = false;
-
-
 
         // GET: Vehicles
         public ActionResult Index(string orderBy, string filter, string searchString, string colorString, string noWheelsString, string vehicleTypes, string RestrictedView)
@@ -53,11 +49,6 @@ namespace Garage20.Controllers
             
             ViewBag.RestrictedView = RestrictedView;
             // VehicleTypeLst.AddRange(VehicleQry);
-            if (!initialized)
-            {
-                initialized = true;
-                this.InitializeTables();
-            }
             ViewBag.vehicleTypes = new SelectList(VehicleQry.Distinct());
             var vehiclesSearch = from v in db.Vehicles
                                  select v;
@@ -85,7 +76,12 @@ namespace Garage20.Controllers
             //End test
 
             ViewBag.AllVehicles = true;
- 
+            if (! initialized)
+            {
+                initialized = true;
+                InitializeTable();
+
+            }
            if (!string.IsNullOrEmpty(orderBy))
             {
                 switch (orderBy)
@@ -115,6 +111,14 @@ namespace Garage20.Controllers
             return View(vehiclesSearch);
         }
 
+        private void InitializeTable()
+        {
+            foreach (var vehicle in this.db.Vehicles)
+            {
+                FindParkingSpace(vehicle);
+            }
+        }
+
         // GET: Vehicles/Details/5
         public ActionResult Details(int? id)
         {
@@ -132,64 +136,45 @@ namespace Garage20.Controllers
 
         private void FreeParkingSpace(Vehicle vehicle)
         {
-            switch (vehicle.VehicleType)
+            int i = vehicle.Placing;
+            int vehicleId = vehicle.VehicleCategoryId;
+            var category = db.VehicleCategories.Where(c => c.Id == vehicleId).First();
+            float size = category.Size;
+            if (size <= 1.0f)
             {
-                case VehicleType.Car:
-                    isOccupied[vehicle.Placing] = false;
-                    break;
-                case VehicleType.Bus:
-                    isOccupied[vehicle.Placing] = false;
-                    isOccupied[vehicle.Placing + 1] = false;
-                    break;
-                case VehicleType.Motorcycle:
-                    motorCycleCount[vehicle.Placing]--;
-                    if (motorCycleCount[vehicle.Placing] == 0)
-                        isOccupied[vehicle.Placing] = false;
-                    break;
-                case VehicleType.Boat:
-                    isOccupied[vehicle.Placing] = false;
-                    isOccupied[vehicle.Placing + 1] = false;
-                    break;
-                case VehicleType.Airplane:
-                    isOccupied[vehicle.Placing] = false;
-                    isOccupied[vehicle.Placing + 1] = false;
-                    isOccupied[vehicle.Placing + 2] = false;
-                    break;
-                default:
-                    break;
+                float temp = Math.Abs(loadFactor[i] - size);
+                if (temp < epsilon)
+                    temp = 0.0f;
+                loadFactor[i] = temp;
+            }
+            else
+            {
+                while (size >= 1.0f)
+                {
+                    loadFactor[i++] = 0.0f;
+                    size -= 1.0f;
+                }
+                loadFactor[i] -= size;
+                if (Math.Abs(loadFactor[i]) < epsilon)
+                    loadFactor[i] = 0.0f;
             }
         }
 
         private int FindParkingSpace(Vehicle vehicle)
         {
-            int size = 0;
-
-            switch (vehicle.VehicleType)
-            {
-                case VehicleType.Car:
-                    size = 0;
-                    break;
-                case VehicleType.Bus:
-                    size = 1;
-                    break;
-                case VehicleType.Motorcycle:
-                    size = 0;
-                    break;
-                case VehicleType.Boat:
-                    size = 1;
-                    break;
-                case VehicleType.Airplane:
-                    size = 2;
-                    break;
-            }
-            if (vehicle.VehicleType == VehicleType.Motorcycle)
+            int vehicleId = vehicle.VehicleCategoryId;
+            var category = db.VehicleCategories.Where(c => c.Id == vehicleId).First();
+            float size = category.Size;
+            if (size <= 1.0f)
             {
                 for (int i = 0; i < GarageCapacity; i++)
                 {
-                    if (!isOccupied[i] || (motorCycleCount[i] > 0 && motorCycleCount[i] < 3))
+                    float temp = loadFactor[i] + size;
+                    if (Math.Abs(temp - 1.0f) < epsilon)
+                        temp = 1.0f;
+                    if (temp <= 1.0f)
                     {
-                        motorCycleCount[i]++;
-                        isOccupied[i] = true;
+                        loadFactor[i] = temp;
                         return i;
                     }
                 }
@@ -198,10 +183,18 @@ namespace Garage20.Controllers
             {
                 for (int i = 0; i < GarageCapacity; i++)
                 {
-                    if (!isOccupied[i] && i + size < GarageCapacity)
+                    int j = i;
+                    while (loadFactor[j] == 0.0f && size >= 1.0f)
                     {
-                        for (int j = i; j <= i + size; j++)
-                            isOccupied[j] = true;
+                        size -= 1.0f;
+                        j++;
+                    }
+                    if (loadFactor[j] + size <= 1.0f)
+                    {
+                        for (int k = i; k < j; k++)
+                            loadFactor[k] = 1.0f;
+                        if (size > 0.0f)
+                            loadFactor[j] += size;
                         return i;
                     }
                 }
@@ -279,6 +272,7 @@ namespace Garage20.Controllers
 
                 vehicle.Checkin = DateTime.Now;
                 vehicle.Checkout = (DateTime)SqlDateTime.MinValue;
+                var category = db.VehicleCategories.Where(c => c.Id == vehicle.VehicleCategoryId).First();
                 int position = this.FindParkingSpace(vehicle);
                 if (position == -1)
                 {
@@ -390,48 +384,6 @@ namespace Garage20.Controllers
             }
         }
 
-        private bool InitializeTables()
-        {
-            var vehicles = this.db.Vehicles.ToList();
-
-            for (int i = 0; i < GarageCapacity; i++)
-                motorCycleCount[i] = 0;
-            foreach (Vehicle vehicle in vehicles)
-            {
-                switch (vehicle.VehicleType)
-                {
-                    case VehicleType.Car:
-                       isOccupied[vehicle.Placing] = true;
-                       break;
-
-                    case VehicleType.Bus:
-                        isOccupied[vehicle.Placing] = true;
-                        isOccupied[vehicle.Placing + 1] = true;
-                        break;
-
-                    case VehicleType.Motorcycle:
-                        isOccupied[vehicle.Placing] = true;
-                        motorCycleCount[vehicle.Placing]++;
-                        break;
-
-                    case VehicleType.Airplane:
-                        isOccupied[vehicle.Placing] = true;
-                        isOccupied[vehicle.Placing + 1] = true;
-                        isOccupied[vehicle.Placing + 2] = true;
-                        break;
-
-                    case VehicleType.Boat:
-                        isOccupied[vehicle.Placing] = true;
-                        isOccupied[vehicle.Placing + 1] = true;
-                        break;
-
-                    default:
-                        break;
-                }
-            }
-            return true;
-        }
-
         public ActionResult Statistics()
         {
 
@@ -463,22 +415,5 @@ namespace Garage20.Controllers
 
             return View();
         }
-
-        // [Remote("CheckRegNrExist", "Vehicles", HttpMethod = "POST", ErrorMessage = "Registration number already exists.")]
-        //public ActionResult CheckRegNrExist(string Regnr)
-        //{
-        //    bool ifRegNrExist = false;
-        //    try
-        //    {
-        //        ifRegNrExist = Regnr.Equals(Regnr) ? true : false;
-        //        return Json(!ifRegNrExist, JsonRequestBehavior.AllowGet);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return Json(false, JsonRequestBehavior.AllowGet);
-        //    }
-        //}
-
-
     }
 }
