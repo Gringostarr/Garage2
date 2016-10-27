@@ -17,6 +17,24 @@
         <dd>
             @Html.DisplayFor(model => model.Name)
         </dd>
+        <dt>
+            Owned Vehicles
+        </dt>
+
+        <dd>
+            <table>
+                @foreach (var v in ViewBag.VehiclesOwned)
+                {
+                <tr>
+                    <td>@v.Regnr</td>
+                    <td>
+                        @Html.ActionLink("Checkout", "Delete", "Vehicles", new { id = v.Id }, null)
+                    </td>
+                </tr>
+                }
+            </table>
+            
+        </dd>
 
     </dl>
 </div>

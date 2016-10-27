@@ -215,7 +215,7 @@ namespace Garage20.Controllers
         }
 
         // GET: Vehicles/Create
-        public ActionResult Create(int id)
+        public ActionResult Create(int? id)
         {
             ViewBag.MemberId = new SelectList(db.Members, "Id", "Name", id);
             ViewBag.VehicleCategoryId = new SelectList(db.VehicleCategories, "Id", "Category");
