@@ -26,8 +26,8 @@ else
         <!--@Html.DropDownList("VehicleType",selectList,"All", new { onChange = $"document.location.href = '?filter=' + this.value" })<br>-->
         <br/>
         <div>
-            @Html.RadioButton("view", "True", isChecked: true)    Detailed overview
-            @Html.RadioButton("view", "False", isChecked: false)    Complete overview
+            @Html.RadioButton("view", "True", isChecked: true)    Restricted overview
+            @Html.RadioButton("view", "False", isChecked: false)    Detailed overview
         </div>
         <br/>
 
