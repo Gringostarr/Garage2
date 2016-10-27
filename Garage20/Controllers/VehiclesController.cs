@@ -43,16 +43,16 @@ namespace Garage20.Controllers
 
 
         // GET: Vehicles
-        public ActionResult Index(string orderBy, string filter, string searchString, string colorString, string noWheelsString, string vehicleTypes, string RestrictedView)
+        public ActionResult Index(string orderBy, string filter, string searchString, string colorString, string noWheelsString, string vehicleTypes, string RestrictedView, string view)
         {
             //Patrik test
             var VehicleTypeLst = new List<string>();
 
             var VehicleQry = from d in db.Vehicles
                              select d.VehicleCategory.Category;
+            if (String.IsNullOrEmpty(view)) { view = "true"; };
+            ViewBag.RestrictedView = view.ToLower(); // RestrictedView;
             
-            ViewBag.RestrictedView = RestrictedView;
-            // VehicleTypeLst.AddRange(VehicleQry);
             if (!initialized)
             {
                 initialized = true;
@@ -271,6 +271,8 @@ namespace Garage20.Controllers
             {
                 ViewBag.PossibleToAdd = db.Vehicles.Count() < vars.GarageCapacity;
                 ModelState.AddModelError("RegNr", "Registration number exists");
+                ViewBag.MemberId = new SelectList(db.Members, "Id", "Name", vehicle.MemberId);
+                ViewBag.VehicleCategoryId = new SelectList(db.VehicleCategories, "Id", "Category", vehicle.VehicleCategoryId);
                 return View(vehicle);
             }
             if (ModelState.IsValid)
