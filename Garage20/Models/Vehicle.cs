@@ -22,7 +22,7 @@ namespace Garage20.Models
 
         private string regNr;
         [RegularExpression(@"[a-zA-Z]{3}(([0-9][0-9][1-9])|([1-9][0-9]0)|(0[1-9]0))", ErrorMessage ="Invalid registration number")]
-        //[System.ComponentModel.DataAnnotations.Schema.Index(IsUnique = true)]
+        [Required]
         public string Regnr {
             get
             {
@@ -34,9 +34,11 @@ namespace Garage20.Models
             }
         }
 
+        [Required]
         [VehicleColor(ErrorMessage = "Unrecognized color")]
         public string Color { get; set; }
 
+        [Required]
         [Range(0, 100)]
         [Display(Name = "Wheels")]
         public int NumberOfWheels { get; set; }

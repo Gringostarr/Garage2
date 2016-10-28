@@ -8,6 +8,7 @@ using System.Web;
 using System.Web.Mvc;
 using Garage20.Models;
 using System.Data.SqlTypes;
+using System.Drawing;
 
 namespace Garage20.Controllers
 {
@@ -49,7 +50,6 @@ namespace Garage20.Controllers
             if (String.IsNullOrEmpty(view)) { view = "true"; };
             ViewBag.RestrictedView = view.ToLower(); // RestrictedView;
             
-            ViewBag.RestrictedView = RestrictedView;
             // VehicleTypeLst.AddRange(VehicleQry);
             if (!initialized)
             {
@@ -267,6 +267,22 @@ namespace Garage20.Controllers
         {
             var vehicles = from v in db.Vehicles
                            select v;
+
+
+
+            string name = vehicle.Color as string;
+            Color color = Color.FromName(name);
+
+            if (!color.IsKnownColor)
+            {
+                ViewBag.PossibleToAdd = db.Vehicles.Count() < vars.GarageCapacity;
+                ModelState.AddModelError("VehicleColor", "Color is not recognized!");
+                ViewBag.MemberId = new SelectList(db.Members, "Id", "Name", vehicle.MemberId);
+                ViewBag.VehicleCategoryId = new SelectList(db.VehicleCategories, "Id", "Category", vehicle.VehicleCategoryId);
+                return View(vehicle);
+            }
+
+
             if (vehicles.Any(o => o.Regnr == vehicle.Regnr))
             {
                 ViewBag.PossibleToAdd = db.Vehicles.Count() < vars.GarageCapacity;
@@ -399,11 +415,19 @@ namespace Garage20.Controllers
             if (db.Vehicles.Count() > 0)
             {
                 double totalTime = 0;
-                ViewBag.CarCount = db.Vehicles.Where(v => v.VehicleType == VehicleType.Car).Count();
-                ViewBag.BusCount = db.Vehicles.Where(v => v.VehicleType == VehicleType.Bus).Count();
-                ViewBag.AirplaneCount = db.Vehicles.Where(v => v.VehicleType == VehicleType.Airplane).Count();
-                ViewBag.BoatCount = db.Vehicles.Where(v => v.VehicleType == VehicleType.Boat).Count();
-                ViewBag.MotorcycleCount = db.Vehicles.Where(v => v.VehicleType == VehicleType.Motorcycle).Count();
+
+                foreach (var vc in db.VehicleCategories)
+                {
+                    ViewBag.Count += vc.Category + ":" + db.Vehicles.Where(v => v.VehicleCategoryId == vc.Id).Count() + " | ";
+                }
+
+
+
+                //ViewBag.CarCount = db.Vehicles.Where(v => v.VehicleType == VehicleType.Car).Count();
+                //ViewBag.BusCount = db.Vehicles.Where(v => v.VehicleType == VehicleType.Bus).Count();
+                //ViewBag.AirplaneCount = db.Vehicles.Where(v => v.VehicleType == VehicleType.Airplane).Count();
+                //ViewBag.BoatCount = db.Vehicles.Where(v => v.VehicleType == VehicleType.Boat).Count();
+                //ViewBag.MotorcycleCount = db.Vehicles.Where(v => v.VehicleType == VehicleType.Motorcycle).Count();
                 ViewBag.WheelCount = db.Vehicles.Sum(x => x.NumberOfWheels);
                 ViewBag.VehicleCount = db.Vehicles.Count();
 

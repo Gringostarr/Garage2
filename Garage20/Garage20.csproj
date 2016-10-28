@@ -144,6 +144,18 @@
     <Compile Include="Migrations\201610261131076_Init.Designer.cs">
       <DependentUpon>201610261131076_Init.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201610271404512_Requiredfileds.cs" />
+    <Compile Include="Migrations\201610271404512_Requiredfileds.Designer.cs">
+      <DependentUpon>201610271404512_Requiredfileds.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201610271440340_Required2.cs" />
+    <Compile Include="Migrations\201610271440340_Required2.Designer.cs">
+      <DependentUpon>201610271440340_Required2.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201610271444343_Required3.cs" />
+    <Compile Include="Migrations\201610271444343_Required3.Designer.cs">
+      <DependentUpon>201610271444343_Required3.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Member.cs" />
     <Compile Include="Models\Vehicle.cs" />
@@ -229,6 +241,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201610261131076_Init.resx">
       <DependentUpon>201610261131076_Init.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201610271404512_Requiredfileds.resx">
+      <DependentUpon>201610271404512_Requiredfileds.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201610271440340_Required2.resx">
+      <DependentUpon>201610271440340_Required2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201610271444343_Required3.resx">
+      <DependentUpon>201610271444343_Required3.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
